@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <h1>Admin</h1>
+        <p>Her kan I oprette kategorier og ønsker, markere modtagne gaver og nulstille valg efter en anledning.</p>
+        <nav class="nav">
+          <a href="/">Ønskeseddel</a>
+          <a href="/gaver.html">Vælg gave</a>
+          <a class="active" href="/admin.html">Admin</a>
+        </nav>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <h2>Tilføj kategori</h2>
+          <form id="category-form">
+            <label>
+              Nyt kategorinavn
+              <input name="name" placeholder="For eksempel Oplevelser">
+            </label>
+            <button type="submit">Gem kategori</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <h2>Tilføj ønske</h2>
+          <form id="wish-form">
+            <label>
+              Liste
+              <select name="owner">
+                <option value="anni">Anni</option>
+                <option value="johannes">Johannes</option>
+                <option value="shared">Fælles</option>
+              </select>
+            </label>
+            <label>
+              Kategori
+              <select id="wish-category" name="category"></select>
+            </label>
+            <label>
+              Ønske
+              <input name="title" placeholder="Skriv ønsket her">
+            </label>
+            <label>
+              Link til webshop
+              <input name="link" type="url" placeholder="Valgfrit link">
+            </label>
+            <button type="submit">Tilføj ønske</button>
+          </form>
+        </article>
+      </section>
+
+      <section class="panel" style="margin-top: 1.5rem;">
+        <div class="toolbar">
+          <div>
+            <h2>Vedligeholdelse</h2>
+            <p class="note">Nulstilling fjerner alle reservationer på ønsker, der ikke er markeret som modtaget.</p>
+          </div>
+          <button id="reset-button" class="danger" type="button">Nulstil valgte ønsker</button>
+        </div>
+        <p id="admin-status" class="status"></p>
+      </section>
+
+      <section id="admin-root" class="stack" style="margin-top: 1.5rem;" aria-live="polite"></section>
+    </main>
+
+    <script type="module" src="/admin.js"></script>
+  </body>
+  </html>

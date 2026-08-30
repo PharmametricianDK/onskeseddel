@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "onskeseddel",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-30",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
+  },
+  "r2_buckets": [
+    {
+      "binding": "WISHLIST_BUCKET",
+      "bucket_name": "onskeseddel-storage",
+      "preview_bucket_name": "onskeseddel-storage-preview"
+    }
+  ],
+  "vars": {
+    "ADMIN_USERNAME": "admin"
+  }
+}

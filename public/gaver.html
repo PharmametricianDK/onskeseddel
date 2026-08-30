@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vælg gave</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <h1>Vælg en gave</h1>
+        <p>Markér det ønskede gaveønske for at undgå dubletter. Valgte ønsker bliver dæmpet og låses.</p>
+        <nav class="nav">
+          <a href="/">Ønskeseddel</a>
+          <a class="active" href="/gaver.html">Vælg gave</a>
+          <a href="/admin.html">Admin</a>
+        </nav>
+      </section>
+
+      <section class="panel" style="margin-top: 1.5rem;">
+        <form id="claimer-form">
+          <label>
+            Dit navn
+            <input id="claimer-name" name="name" autocomplete="name" placeholder="Skriv dit navn">
+          </label>
+        </form>
+        <p class="note">Navnet bruges kun til at låse ønsket i systemet og vises ikke på admin-siden.</p>
+        <p id="claim-status" class="status"></p>
+      </section>
+
+      <section id="claim-root" class="grid" aria-live="polite"></section>
+    </main>
+
+    <script type="module" src="/gaver.js"></script>
+  </body>
+  </html>
