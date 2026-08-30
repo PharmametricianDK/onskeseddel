@@ -1,18 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Shadows+Into+Light&display=swap');
+
 :root {
-  --bg: #f4f1ea;
-  --panel: #fffdf9;
-  --panel-soft: #efe8dc;
-  --ink: #22201b;
-  --muted: #6b665c;
-  --line: #d3cabd;
-  --accent: #375f4b;
-  --accent-soft: #dce9e2;
+  --bg: #f5f7fa;
+  --panel: #ffffff;
+  --panel-soft: #e8ecef;
+  --ink: #001965;
+  --muted: #5a6572;
+  --line: #d0d7de;
+  --accent: #2b547e;
+  --accent-soft: #dce6f1;
   --danger: #8a3d2e;
   --danger-soft: #f4dfda;
   --shadow: 0 14px 32px rgba(34, 32, 27, 0.08);
   --radius: 18px;
   --radius-sm: 12px;
-  --font: "Georgia", "Times New Roman", serif;
+  --font: "Nunito", sans-serif;
 }
 
 * {
@@ -46,7 +48,9 @@ a {
   box-shadow: var(--shadow);
 }
 
-.hero h1,
+.hero h1 {
+  font-family: "Shadows Into Light", cursive;
+}
 .hero h2,
 .hero p {
   margin-top: 0;
