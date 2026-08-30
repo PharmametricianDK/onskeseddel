@@ -3,6 +3,7 @@
   "name": "onskeseddel",
   "main": "src/worker.js",
   "compatibility_date": "2026-08-30",
+  "keep_vars": true,
   "compatibility_flags": ["assets_navigation_has_no_effect"],
   "assets": {
     "binding": "ASSETS",
