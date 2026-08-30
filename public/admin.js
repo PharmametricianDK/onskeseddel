@@ -9,10 +9,14 @@ const categoryForm = document.querySelector("#category-form");
 const wishForm = document.querySelector("#wish-form");
 const resetButton = document.querySelector("#reset-button");
 const categorySelect = document.querySelector("#wish-category");
+const wishSubmitButton = document.querySelector("#wish-submit");
+const cancelEditButton = document.querySelector("#cancel-edit");
+let editingWishId = null;
 
 categoryForm.addEventListener("submit", handleCategorySubmit);
 wishForm.addEventListener("submit", handleWishSubmit);
 resetButton.addEventListener("click", handleReset);
+cancelEditButton.addEventListener("click", stopEditing);
 
 loadAdmin();
 
@@ -66,6 +70,14 @@ function renderAdmin(data) {
       toggleReceived(button.dataset.wishId, button.dataset.received !== "true")
     );
   });
+
+  root.querySelectorAll("[data-edit-wish]").forEach((button) => {
+    button.addEventListener("click", () => startEditing(button.dataset.wishId, data));
+  });
+
+  root.querySelectorAll("[data-delete-wish]").forEach((button) => {
+    button.addEventListener("click", () => deleteWish(button.dataset.wishId));
+  });
 }
 
 function renderWishCard(wish) {
@@ -90,6 +102,12 @@ function renderWishCard(wish) {
           data-received="${wish.received}"
         >
           ${wish.received ? "Markér som ikke modtaget" : "Markér som modtaget"}
+        </button>
+        <button type="button" class="secondary" data-edit-wish data-wish-id="${wish.id}">
+          Rediger
+        </button>
+        <button type="button" class="danger" data-delete-wish data-wish-id="${wish.id}">
+          Slet
         </button>
       </div>
     </article>
@@ -134,17 +152,26 @@ async function handleWishSubmit(event) {
     return;
   }
 
-  setStatus("Gemmer ønske...");
-  const response = await fetch("/api/admin/wishes", {
-    method: "POST",
+  const isEditing = Boolean(editingWishId);
+  setStatus(isEditing ? "Gemmer ændringer..." : "Gemmer ønske...");
+  const response = await fetch(
+    isEditing ? `/api/admin/wishes/${editingWishId}` : "/api/admin/wishes",
+    {
+      method: isEditing ? "PUT" : "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(payload)
-  });
+    }
+  );
 
-  await handleAdminRefresh(response, "Ønske tilføjet.");
-  wishForm.reset();
+  const saved = await handleAdminRefresh(
+    response,
+    isEditing ? "Ønsket er opdateret." : "Ønske tilføjet."
+  );
+  if (saved) {
+    stopEditing();
+  }
 }
 
 async function handleReset() {
@@ -172,17 +199,56 @@ async function toggleReceived(wishId, received) {
   );
 }
 
+function startEditing(wishId, data) {
+  const wish = data.wishes.find((entry) => entry.id === wishId);
+  if (!wish) {
+    setStatus("Ønsket blev ikke fundet.", true);
+    return;
+  }
+
+  editingWishId = wish.id;
+  wishForm.elements.owner.value = wish.owner;
+  wishForm.elements.category.value = wish.category;
+  wishForm.elements.title.value = wish.title;
+  wishForm.elements.link.value = wish.link || "";
+  wishSubmitButton.textContent = "Gem ændringer";
+  cancelEditButton.hidden = false;
+  setStatus("Redigerer ønsket. Ret felterne og vælg Gem ændringer.");
+  wishForm.elements.title.focus();
+}
+
+function stopEditing() {
+  editingWishId = null;
+  wishForm.reset();
+  wishSubmitButton.textContent = "Tilføj ønske";
+  cancelEditButton.hidden = true;
+}
+
+async function deleteWish(wishId) {
+  if (!window.confirm("Vil du slette dette ønske permanent?")) {
+    return;
+  }
+
+  setStatus("Sletter ønske...");
+  const response = await fetch(`/api/admin/wishes/${wishId}`, {
+    method: "DELETE"
+  });
+
+  await handleAdminRefresh(response, "Ønsket er slettet.");
+}
+
 async function handleAdminRefresh(response, successMessage) {
   if (!response.ok) {
     const data = await response.json();
     setStatus(data.error || "Noget gik galt.", true);
-    return;
+    return false;
   }
 
   const data = await response.json();
   updateCategoryOptions(data.categories);
   renderAdmin(data);
   setStatus(successMessage);
+  return true;
 }
 
 function setStatus(message, isError = false) {
@@ -201,3 +267,4 @@ function escapeHtml(value) {
 function escapeAttribute(value) {
   return escapeHtml(value).replaceAll("'", "&#39;");
 }
+
