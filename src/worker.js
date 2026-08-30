@@ -66,15 +66,18 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/admin" || url.pathname === "/admin/") {
-      url.pathname = "/admin.html";
-      return Response.redirect(url.toString(), 302);
-    }
-
-    if (url.pathname === "/admin.html") {
+    const isAdminPage = ["/admin", "/admin/", "/admin.html"].includes(
+      url.pathname
+    );
+    if (isAdminPage) {
       const authorized = isAuthorized(request, env);
       if (!authorized.ok) {
         return authorized.response;
+      }
+
+      if (url.pathname !== "/admin.html") {
+        url.pathname = "/admin.html";
+        return env.ASSETS.fetch(new Request(url.toString(), request));
       }
     }
 
