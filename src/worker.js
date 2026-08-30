@@ -85,6 +85,11 @@ export default {
       return handleApi(request, env, url);
     }
 
+    if (url.pathname === "/") {
+      url.pathname = "/index.html";
+      return env.ASSETS.fetch(new Request(url.toString(), request));
+    }
+
     return env.ASSETS.fetch(request);
   }
 };
