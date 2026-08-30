@@ -66,6 +66,11 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    if (url.pathname === "/admin" || url.pathname === "/admin/") {
+      url.pathname = "/admin.html";
+      return Response.redirect(url.toString(), 302);
+    }
+
     if (url.pathname === "/admin.html") {
       const authorized = isAuthorized(request, env);
       if (!authorized.ok) {
@@ -378,3 +383,4 @@ function jsonResponse(payload, status = 200) {
     }
   });
 }
+
