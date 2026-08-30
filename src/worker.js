@@ -186,6 +186,60 @@ async function handleApi(request, env, url) {
       return jsonResponse(toAdminPayload(state), 201);
     }
 
+    const wishMatch = url.pathname.match(/^\/api\/admin\/wishes\/([^/]+)$/);
+    if (wishMatch && request.method === "PUT") {
+      const body = await readJson(request);
+      const title = `${body.title || ""}`.trim();
+      const category = `${body.category || ""}`.trim();
+      const owner = `${body.owner || ""}`.trim();
+      const link = `${body.link || ""}`.trim();
+
+      if (!title || !category || !owner) {
+        return jsonResponse({ error: "Titel, kategori og liste er påkrævet." }, 400);
+      }
+
+      if (!["anni", "johannes", "shared"].includes(owner)) {
+        return jsonResponse({ error: "Ugyldig liste." }, 400);
+      }
+
+      const state = await readState(env);
+      const wish = state.wishes.find((entry) => entry.id === wishMatch[1]);
+      if (!wish) {
+        return jsonResponse({ error: "Ønsket blev ikke fundet." }, 404);
+      }
+
+      if (!state.categories.includes(category)) {
+        state.categories.push(category);
+        state.categories.sort((left, right) => left.localeCompare(right, "da"));
+      }
+
+      wish.title = title;
+      wish.category = category;
+      wish.owner = owner;
+      wish.link = link || null;
+      state.updatedAt = new Date().toISOString();
+
+      await writeState(env, state);
+      return jsonResponse(toAdminPayload(state));
+    }
+
+    if (wishMatch && request.method === "DELETE") {
+      const state = await readState(env);
+      const wishIndex = state.wishes.findIndex(
+        (entry) => entry.id === wishMatch[1]
+      );
+
+      if (wishIndex === -1) {
+        return jsonResponse({ error: "Ønsket blev ikke fundet." }, 404);
+      }
+
+      state.wishes.splice(wishIndex, 1);
+      state.updatedAt = new Date().toISOString();
+
+      await writeState(env, state);
+      return jsonResponse(toAdminPayload(state));
+    }
+
     if (request.method === "POST" && url.pathname === "/api/admin/reset-claims") {
       const state = await readState(env);
       state.wishes = state.wishes.map((wish) =>
